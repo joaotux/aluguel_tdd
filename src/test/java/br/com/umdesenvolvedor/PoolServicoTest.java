@@ -2,7 +2,10 @@ package br.com.umdesenvolvedor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +47,24 @@ public class PoolServicoTest {
             Long id = servico.creat(pool);
 
             assertEquals(1L, id);
+        }
+
+        @Test
+        @DisplayName("Valida que a listagem está retornando dados.")
+        void validReturnListAll() {
+            List<Pool> listReturn = List.of(
+                new Pool("Piscina 01", false, 35.0, 2.5), 
+                new Pool("Piscina 02", false, 35.0, 2.5),
+                new Pool("Piscina 03", true, 19.0, 0.4),
+                new Pool("Piscina 04", false, 35.0, 2.5),
+                new Pool("Piscina 05", true, 20.0, 0.3)
+            );
+
+            when(repository.list()).thenReturn(listReturn);
+
+            var list = servico.list();
+
+            assertTrue(list.size() == 5);
         }
         
     }
