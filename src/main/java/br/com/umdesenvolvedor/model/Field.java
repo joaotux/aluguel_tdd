@@ -1,5 +1,7 @@
 package br.com.umdesenvolvedor.model;
 
+import static java.util.Objects.isNull;
+
 import br.com.umdesenvolvedor.enumerated.FieldTypeEnum;
 import lombok.Builder;
 
@@ -20,6 +22,13 @@ public class Field extends Source {
         field.setActive(true);
 
         return field;
+    }
+
+    public boolean isValid() {
+        if(isNull(size) || isNull(type) || isNull(getDescription()) || getDescription().isBlank())
+            return false;
+
+        return true;
     }
     
 }

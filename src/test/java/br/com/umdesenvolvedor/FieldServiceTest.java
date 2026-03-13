@@ -1,9 +1,9 @@
 package br.com.umdesenvolvedor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.umdesenvolvedor.enumerated.FieldTypeEnum;
+import br.com.umdesenvolvedor.exception.FieldWithDatasInvalidsException;
 import br.com.umdesenvolvedor.model.Field;
 import br.com.umdesenvolvedor.repository.FieldRepository;
 import br.com.umdesenvolvedor.service.FieldService;
@@ -75,12 +76,34 @@ public class FieldServiceTest {
             assertThat(listReturn).as("Deve ter quantidade 3").hasSize(4);
         }
 
+        @Test
+        @DisplayName("Deve retornar um registro ao pesquisar por ID.")
+        void validFindById() {
+            field.setId(1L);
+            when(repository.findById(1L)).thenReturn(Optional.of(field));
+
+            Optional<Field> optional = service.findById(1L);
+
+            assertThat(optional).as("O optional não deve ser vazio").isNotEmpty();
+            assertThat(optional.get().getId()).as("Deve ter o ID igual a 1").isEqualTo(1L);
+        }
+
     }
 
     @Nested
     @DisplayName("Cenários de validações")
     class TestsValidations {
 
+        @Test
+        @DisplayName("Valida que todos os campos foram preenchidos corretamente.")
+        void validFields() {
+            var field = Field.builder().build();
+
+            assertThatExceptionOfType(FieldWithDatasInvalidsException.class)
+                .as("Deve lançar a exception de validação dos dados.")
+                .isThrownBy(() -> service.create(field))
+                .withMessage("Dados inválidos.");
+        }
     }
 
 }
